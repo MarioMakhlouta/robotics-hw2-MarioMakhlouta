@@ -1,6 +1,6 @@
 #include "fleet.hpp"
-#include "include/mobile_robot.hpp"
-#include "include/cleaning_robot.hpp"
+#include "mobile_robot.hpp"
+#include "cleaning_robot.hpp"
 #include <iostream>
 #include <limits>
 
