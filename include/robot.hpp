@@ -25,6 +25,8 @@ public:
     // Why friend and not a regular method? Add a comment when you implement this.
     friend std::ostream& operator<<(std::ostream& os, const Robot& r);
 
+    void set_status(const std::string& status); // NEW
+
 protected:
     std::string id_;
     std::string name_;

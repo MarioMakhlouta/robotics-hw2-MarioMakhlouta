@@ -17,6 +17,10 @@ std::string Robot::name()    const { return name_; }
 int         Robot::battery() const { return battery_; }
 std::string Robot::status()  const { return status_; }
 
+void Robot::set_status(const std::string& status) {
+    status_ = status;
+}
+
 bool Robot::operator==(const Robot& other) const {
     return id_ == other.id_;
 }
