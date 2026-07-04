@@ -1,6 +1,7 @@
 #include "fleet.hpp"
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 
 void Fleet::add(std::shared_ptr<Robot> robot) {
     robots_[robot->id()] = robot;

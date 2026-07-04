@@ -1,6 +1,6 @@
 #include "fleet.hpp"
-#include "mobile_robot.hpp"
-#include "cleaning_robot.hpp"
+#include "include/mobile_robot.hpp"
+#include "include/cleaning_robot.hpp"
 #include <iostream>
 #include <limits>
 
@@ -20,11 +20,11 @@ int main() {
     int choice = -1;
 
     while (choice != 0) {
-        std::cout << "\n=== Robot Fleet Manager ===\n"
+        std::cout << "\033[34m\n=== Robot Fleet Manager ===\n"
                     "1. Add robot\n2. Remove robot\n3. Show all robots\n"
                     "4. Work (single robot)\n5. Work all\n6. Charge all\n"
                     "7. Assign task to robot\n8. Show task queue\n"
-                    "9. Start timed work on a robot\n0. Exit\n";
+                    "9. Start timed work on a robot\n0. Exit\n\033[0m";
         choice = read_int("Choose: ");
 
         try {
