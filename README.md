@@ -27,7 +27,8 @@ STL containers, operator overloading, threads, and exception handling.
 robotics-hw2-yourname/
 ├── include/        # all .hpp files
 ├── src/            # all .cpp files
-├── main.cpp        # interactive menu
+      |
+      ── main.cpp        # interactive menu
 ├── compile.sh      # compile command
 ├── README.md
 ├── ANSWERS.md
