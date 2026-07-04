@@ -4,6 +4,9 @@
 #include <iostream>
 
 void Fleet::add(std::shared_ptr<Robot> robot) {
+    if (robots_.find(robot->id()) != robots_.end()) {
+        throw std::runtime_error("A robot with id " + robot->id() + " already exists");
+    }
     robots_[robot->id()] = robot;
 }
 
