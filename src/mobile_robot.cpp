@@ -1,5 +1,5 @@
 #include "mobile_robot.hpp"
-#include <algorithm>
+#include <algorithm> // for std::clamp
 #include <chrono>
 #include <iostream>
 #include <stdexcept>

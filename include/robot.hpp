@@ -16,6 +16,7 @@ public:
     std::string name()    const;
     int         battery() const;
     std::string status()  const;
+    void set_status(const std::string& status); // NEW
 
     bool operator==(const Robot& other) const;
 
@@ -24,8 +25,6 @@ public:
 
     // Why friend and not a regular method? Add a comment when you implement this.
     friend std::ostream& operator<<(std::ostream& os, const Robot& r);
-
-    void set_status(const std::string& status); // NEW
 
 protected:
     std::string id_;

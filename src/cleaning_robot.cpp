@@ -1,5 +1,5 @@
 #include "cleaning_robot.hpp"
-#include <algorithm>
+#include <algorithm> //for std::clamp
 #include <iostream>
 #include <stdexcept>
 
