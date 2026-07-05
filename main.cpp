@@ -1,6 +1,7 @@
 #include "fleet.hpp"
 #include "mobile_robot.hpp"
 #include "cleaning_robot.hpp"
+#include "cooking_robot.hpp" 
 #include <iostream>
 #include <limits>
 
@@ -30,10 +31,44 @@ int main() {
         try {
             switch (choice) {
                 case 1: {
-                    std::cout << "id name battery speed: ";
-                    std::string id, name; int battery; double speed;
-                    std::cin >> id >> name >> battery >> speed;
-                    fleet.add(std::make_shared<MobileRobot>(id, name, battery, speed));
+                    std::cout << "\033[33m\nWhat kind of robot are you building today?\n"
+                                "  1. MobileRobot   - a general-purpose wanderer\n"
+                                "  2. CleaningRobot - scrubs floors, empties its bin\n"
+                                "  3. CookingRobot  - whips up meals in the kitchen\n\033[0m";
+                    int type_choice = read_int("Pick a type (1-3): ");
+
+                    std::cout << "id name battery: ";
+                    std::string id, name; int battery;
+                    std::cin >> id >> name >> battery;
+
+                    switch (type_choice) {
+                        case 1: {
+                            double speed;
+                            std::cout << "speed (m/s): ";
+                            std::cin >> speed;
+                            fleet.add(std::make_shared<MobileRobot>(id, name, battery, speed));
+                            std::cout << "🤖 " << name << " rolls off the assembly line, ready to roam!\n";
+                            break;
+                        }
+                        case 2: {
+                            double speed; int bin_capacity;
+                            std::cout << "speed (m/s), bin capacity (L): ";
+                            std::cin >> speed >> bin_capacity;
+                            fleet.add(std::make_shared<CleaningRobot>(id, name, battery, speed, bin_capacity));
+                            std::cout << "🧹 " << name << " gleams with fresh polish, dust bin at the ready!\n";
+                            break;
+                        }
+                        case 3: {
+                            std::string specialty;
+                            std::cout << "specialty (e.g. grilling, baking, sushi): ";
+                            std::cin >> specialty;
+                            fleet.add(std::make_shared<CookingRobot>(id, name, battery, specialty));
+                            std::cout << "👨‍🍳 " << name << " ties on an apron, eager to cook some " << specialty << "!\n";
+                            break;
+                        }
+                        default:
+                            std::cout << "Unknown robot type — nothing was created.\n";
+                    }
                     break;
                 }
                 case 2: {

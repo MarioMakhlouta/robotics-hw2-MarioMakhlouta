@@ -38,6 +38,7 @@ void MobileRobot::start_work(int seconds) {
                     << " status=" << status_ << "\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
+        std::cout<< name_ << " finished work\n";
         status_ = "idle";
     });
 }
