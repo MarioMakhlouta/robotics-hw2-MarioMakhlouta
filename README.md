@@ -83,3 +83,40 @@ You'll see a menu:
   O(log n) push/pop and O(1) access to the highest-priority task — exactly
   what "always process highest priority first" needs, without ever needing
   to search the middle of the queue.
+
+## Design notes
+
+- **`shared_ptr` in `Fleet`, not `unique_ptr`**: `Fleet::find()` needs to
+  return a robot to the caller (e.g. `main.cpp`) while `Fleet` itself keeps
+  ownership internally. `unique_ptr` only allows one owner at a time, so it
+  can't be copied out like that — `shared_ptr` lets both `Fleet` and the
+  caller safely hold a reference to the same robot.
+- **`unordered_map` for `robots_`**: average O(1) lookup by id, which is the
+  most frequent operation (`find`, `assign_task`, `remove`). Robot order
+  doesn't matter for this fleet, so a hash map beats a vector (O(n) search).
+- **`priority_queue` for the task queue**: built on a binary heap, giving
+  O(log n) push/pop and O(1) access to the highest-priority task — exactly
+  what "always process highest priority first" needs, without ever needing
+  to search the middle of the queue.
+
+
+## Problems I ran into
+
+- **Duplicate robot ids silently overwrote existing robots.** While testing,
+  I added a robot with id `1`, then later added a different robot also using
+  id `1`. My original `Fleet::add()` just did `robots_[robot->id()] = robot;`,
+  which silently replaced the first robot with no warning — it just vanished
+  from `show all robots` with no error at all. I fixed this by checking if
+  the id already existed in `add()` and throwing a `std::runtime_error` if
+  so, which `main.cpp` already catches like every other risky call.
+
+- **Verifying the background thread shuts down cleanly on exit.** Since
+  `MobileRobot` launches a `std::thread` in `start_work()`, exiting the
+  program while that thread is still running could crash with
+  `terminate called without an active exception` if the thread isn't
+  properly joined. I tested this directly by starting a long timed job and
+  choosing "Exit" immediately while the robot's battery was still well above
+  0 (so the thread was definitely still active). The program correctly
+  waited for the thread's current cycle to finish and exited cleanly,
+  confirming `stop_`/`worker_.join()` in the destructor work as intended
+  even under real concurrent conditions.
