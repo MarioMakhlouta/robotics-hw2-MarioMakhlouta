@@ -6,8 +6,11 @@
 
 MobileRobot::MobileRobot(const std::string& id, const std::string& name,
                         int battery, double speed)
-    : Robot(id, name, battery), speed_(speed) {}
-
+    : Robot(id, name, battery), speed_(speed) {
+    if (speed_ < 0) {
+        throw std::invalid_argument("Speed cannot be negative");
+    }
+}
 MobileRobot::~MobileRobot() {
     stop_ = true;
     if (worker_.joinable()) worker_.join();

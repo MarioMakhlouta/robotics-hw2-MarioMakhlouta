@@ -1,18 +1,58 @@
 #include "fleet.hpp"
 #include "mobile_robot.hpp"
 #include "cleaning_robot.hpp"
-#include "cooking_robot.hpp" 
+#include "cooking_robot.hpp"
 #include <iostream>
 #include <limits>
+#include <cctype>   // for std::isdigit, std::isspace
 
-int read_int(const std::string& prompt) {
-    std::cout << prompt;
+// ---- Validated input helpers ----
+// Used everywhere user input is read, so no path can leave std::cin in a
+// broken state or leak leftover characters into the next prompt.
+
+int read_int(const std::string& prompt, bool allow_negative = false) {
     int value;
-    while (!(std::cin >> value)) {
-        std::cin.clear();
+    while (true) {
+        std::cout << prompt;
+        if (!(std::cin >> value)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Please enter a valid number. ";
+            continue;
+        }
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Please enter a valid number: ";
+
+        if (!allow_negative && value < 0) {
+            std::cout << "Value cannot be negative. ";
+            continue;
+        }
+        return value;
     }
+}
+double read_double(const std::string& prompt) {
+    double value;
+    while (true) {
+        std::cout << prompt;
+        if (!(std::cin >> value)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Please enter a valid number. ";
+            continue;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if (value < 0) {
+            std::cout << "Value cannot be negative. ";
+            continue;
+        }
+        return value;
+    }
+}
+
+std::string read_line(const std::string& prompt) {
+    std::cout << prompt;
+    std::string value;
+    std::getline(std::cin, value);
     return value;
 }
 
@@ -37,31 +77,26 @@ int main() {
                                 "  3. CookingRobot  - whips up meals in the kitchen\n\033[0m";
                     int type_choice = read_int("Pick a type (1-3): ");
 
-                    std::cout << "id name battery: ";
-                    std::string id, name; int battery;
-                    std::cin >> id >> name >> battery;
+                    std::string id = read_line("id: ");
+                    std::string name = read_line("name: ");
+                    int battery = read_int("battery: ");
 
                     switch (type_choice) {
                         case 1: {
-                            double speed;
-                            std::cout << "speed (m/s): ";
-                            std::cin >> speed;
+                            double speed = read_double("speed (m/s): ");
                             fleet.add(std::make_shared<MobileRobot>(id, name, battery, speed));
                             std::cout << "🤖 " << name << " rolls off the assembly line, ready to roam!\n";
                             break;
                         }
                         case 2: {
-                            double speed; int bin_capacity;
-                            std::cout << "speed (m/s), bin capacity (L): ";
-                            std::cin >> speed >> bin_capacity;
+                            double speed = read_double("speed (m/s): ");
+                            int bin_capacity = read_int("bin capacity (L): ");
                             fleet.add(std::make_shared<CleaningRobot>(id, name, battery, speed, bin_capacity));
                             std::cout << "🧹 " << name << " gleams with fresh polish, dust bin at the ready!\n";
                             break;
                         }
                         case 3: {
-                            std::string specialty;
-                            std::cout << "specialty (e.g. grilling, baking, sushi): ";
-                            std::cin >> specialty;
+                            std::string specialty = read_line("specialty (e.g. grilling, baking, sushi): ");
                             fleet.add(std::make_shared<CookingRobot>(id, name, battery, specialty));
                             std::cout << "👨‍🍳 " << name << " ties on an apron, eager to cook some " << specialty << "!\n";
                             break;
@@ -72,8 +107,7 @@ int main() {
                     break;
                 }
                 case 2: {
-                    std::cout << "id to remove: ";
-                    std::string id; std::cin >> id;
+                    std::string id = read_line("id to remove: ");
                     fleet -= id; // exercises operator-=
                     break;
                 }
@@ -81,25 +115,23 @@ int main() {
                     std::cout << fleet;
                     break;
                 case 4: {
-                    std::cout << "id: ";
-                    std::string id; std::cin >> id;
+                    std::string id = read_line("id: ");
                     fleet.find(id)->work(); // throws if missing OR battery empty
                     break;
                 }
                 case 5: fleet.work_all(); break;
                 case 6: fleet.charge_all(); break;
                 case 7: {
-                    std::cout << "robot id, task name, priority(1-5): ";
-                    std::string id, name; int priority;
-                    std::cin >> id >> name >> priority;
+                    std::string id = read_line("robot id: ");
+                    std::string name = read_line("task name: ");
+                    int priority = read_int("priority (1-5): ");
                     fleet.assign_task(id, Task{name, priority, id});
                     break;
                 }
                 case 8: fleet.show_tasks(); break;
                 case 9: {
-                    std::cout << "id, seconds: ";
-                    std::string id; int seconds;
-                    std::cin >> id >> seconds;
+                    std::string id = read_line("id: ");
+                    int seconds = read_int("seconds: ");
                     auto robot = fleet.find(id);
                     if (auto mobile = std::dynamic_pointer_cast<MobileRobot>(robot)) {
                         mobile->start_work(seconds);

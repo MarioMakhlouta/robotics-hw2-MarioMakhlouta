@@ -5,7 +5,11 @@
 
 CleaningRobot::CleaningRobot(const std::string& id, const std::string& name,
                             int battery, double speed, int bin_capacity)
-    : MobileRobot(id, name, battery, speed), bin_capacity_(bin_capacity) {}
+    : MobileRobot(id, name, battery, speed), bin_capacity_(bin_capacity) {
+    if (bin_capacity_ < 0) {
+        throw std::invalid_argument("Bin capacity cannot be negative");
+    }
+}
 
 void CleaningRobot::work() {
     if (battery_ == 0) {
