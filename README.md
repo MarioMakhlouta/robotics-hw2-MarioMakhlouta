@@ -24,7 +24,7 @@ STL containers, operator overloading, threads, and exception handling.
 ## Project structure
 
 ```
-robotics-hw2-yourname/
+robotics-hw2-MarioMakhlouta/
 ├── include/        # all .hpp files
 ├── src/            # all .cpp files
 |── main.cpp        # interactive menu
